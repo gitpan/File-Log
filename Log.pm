@@ -8,17 +8,8 @@
 #------------------
 package File::Log;
 
-$VERSION = sprintf("%d.%02d", q'$Revision: 1.1 $' =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q'$Revision: 1.2 $' =~ /(\d+)\.(\d+)/);
 #------------------
-#
-my $CVS_Log = q{
-
-$Log: ibm_accruals.pl,v $
-Revision 1.1  2004/07/18 18:20:11  greg
-- Initial release to CPAN
-
-};
-#
 #
 
 #-- Required Modules
@@ -84,18 +75,12 @@ sub _init
 		}
 		else
 		{
-			(
-				$self->{'logfilename'},
-				$self->{'logfilemode'},
-				$self->{'debug'},
-				$self->{'appname'},
-				$self->{'pidstamp'},
-				$self->{'datetimestamp'},
-				$self->{'stderrredirect'},
-				$self->{'defaultfile'},
-				$self->{'storeexptext'},
-				$self->{'logfiledatetime'},
-			) = @_;
+			# Using a more conventional named args
+			my %args = @_;
+			foreach my $key (keys %args)
+			{
+			    $self->{lc($key)}=$args{$key};
+   			}
 		}
 	}
 
@@ -383,7 +368,7 @@ Log - A simple Object Orientated Logger
  my $log = Log->new();
 
  # Typical usage, set the debug level and log filename (say from a config file)
- my $log = Log->new({ debug => $debugLevel, logFileName => $logFileName, });
+ my $log = Log->new(debug => $debugLevel, logFileName => $logFileName,);
 
  # Print message to the log file if the debug is >= 2
  $log->msg(2, "Add this to the log file if debug >= 2 \n");
@@ -576,12 +561,17 @@ see the C<new> method.
 
 =head1 KNOWN ISSUES
 
-none
+None, however please contact the author at gng@cpan.org should you
+find any problems and I will endevour to resolve then as soon as
+possible.
+
+If you have any enhancement suggestions please send me
+an email and I will try to accommodate your suggestion.
 
 =head1 AUTHOR
 
-Greg George, IT Technology Solutions P/L, Australia
-Mobile: +61-404-892-159, Email: gng@cpan.org
+ Greg George, IT Technology Solutions P/L, Australia
+ Mobile: +61-404-892-159, Email: gng@cpan.org
 
 =head1 LICENSE
 
@@ -591,7 +581,16 @@ the same terms as Perl itself.
 
 =head1 CVS ID
 
-$Id: Log.pl,v 1.1 2004/07/18 18:20:11 gxg6 Exp $
+$Id: Log.pm,v 1.2 2004/10/08 23:10:14 Greg Exp $
+
+=head1 CHANGE HISTORY
+
+ $Log: Log.pm,v $
+ Revision 1.2  2004/10/08 23:10:14  Greg
+ - Changed new() to allow named argument as well as the anonymous hash reference.
+
+ Revision 1.1.1.1  2004/07/29 11:15:06  Greg
+ - Initial release to CPAN
 
 =cut
 

@@ -1,3 +1,7 @@
+Log.pm
+Revision 1.2  2004/10/08 23:10:14  Greg
+- Changed new() to allow named argument as well as the anonymous hash reference.
+
 V1.1
 -Initial CPAN release
 
