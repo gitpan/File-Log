@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Log - A simple Object Orientated Logger</title>
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#required_modules">REQUIRED MODULES</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#new">new</a></li>
+		<li><a href="#_init_&_private_methods">_init &amp; Private methods</a></li>
+		<li><a href="#msg">msg</a></li>
+		<li><a href="#exp">exp</a></li>
+		<li><a href="#close">close</a></li>
+		<li><a href="#destroy">DESTROY</a></li>
+		<li><a href="#pidstamp">PIDstamp</a></li>
+		<li><a href="#datetimestamp">dateTimeStamp</a></li>
+		<li><a href="#debugvalue">debugValue</a></li>
+		<li><a href="#exptext">expText</a></li>
+		<li><a href="#getexptext">getExpText</a></li>
+		<li><a href="#clearexptext">clearExpText</a></li>
+		<li><a href="#expcnt">expCnt</a></li>
+		<li><a href="#getfilename">getFileName</a></li>
+	</ul>
+
+	<li><a href="#properties">PROPERTIES</a></li>
+	<li><a href="#known_issues">KNOWN ISSUES</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#license">LICENSE</a></li>
+	<li><a href="#cvs_id">CVS ID</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Log - A simple Object Orientated Logger</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+ use Log;</pre>
+<pre>
+ # Pretty format, all the parameters
+ my $log = Log-&gt;new({
+   debug           =&gt; 4,                   # Set the debug level
+   logFileName     =&gt; 'myLogFile.log',     # define the log filename
+   logFileMode     =&gt; '&gt;',                 # '&gt;&gt;' Append or '&gt;' overwrite
+   dateTimeStamp   =&gt; 1,                   # Timestamp log data entries
+   stderrRedirect  =&gt; 1,                   # Redirect STDERR to the log file
+   defaultFile     =&gt; 1,                   # Use the log file as the default filehandle
+   logFileDateTime =&gt; 1,                   # Timestamp the log filename
+   appName         =&gt; 'myApplicationName', # The name of the application
+   PIDstamp        =&gt; 1,                   # Stamp the log data with the Process ID
+   storeExpText    =&gt; 1,                   # Store internally all exp text
+ });</pre>
+<pre>
+ # Minimal instance, logfile name based on application name
+ my $log = Log-&gt;new();</pre>
+<pre>
+ # Typical usage, set the debug level and log filename (say from a config file)
+ my $log = Log-&gt;new({ debug =&gt; $debugLevel, logFileName =&gt; $logFileName, });</pre>
+<pre>
+ # Print message to the log file if the debug is &gt;= 2
+ $log-&gt;msg(2, &quot;Add this to the log file if debug &gt;= 2 \n&quot;);</pre>
+<pre>
+ # Print an exception (error) message to the log file
+ $log-&gt;exp(&quot;Something went wrong\n&quot;);</pre>
+<pre>
+ # Close the log file (optional at exit)
+ $log-&gt;close();</pre>
+<pre>
+ # Change the debug level, capturing the old value
+ $oldDebugValue     = $log-&gt;debugValue($newDebugValue);</pre>
+<pre>
+ $currentDebugValue = $log-&gt;debugValue();</pre>
+<pre>
+ # Get all the exceptions text (so you can do something with all the errors, eg email them)
+ $allExceptions     = $log-&gt;getExpText();</pre>
+<pre>
+ $numberErrors      = $log-&gt;expCnt();        # How many times has $log-&gt;exp been called</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p><em>Log</em> is a class providing methods to log data to a file.  There are a number
+of parameters that can be passed to allow configuration of the logger.</p>
+<p>
+</p>
+<hr />
+<h1><a name="required_modules">REQUIRED MODULES</a></h1>
+<p>Carp (confess is used), FindBin and Symbol;</p>
+<p>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>There are no class methods, the object methods are described below.
+Private class method start with the underscore character '_' and
+should be treated as <em>Private</em>.</p>
+<p>
+</p>
+<h2><a name="new">new</a></h2>
+<p>Called to create a <em>Log</em> object.  The following optional named parameters can be
+passed to the constructor via an anonymous hash:</p>
+<dl>
+<dt><strong><a name="item_debug">debug</a></strong><br />
+</dt>
+<dd>
+Used to set the debug level.  The default level is 9.  The debug level is used by
+other methods to determine if data is logged or ignored.  See <code>msg</code> and <code>exp</code> methods.
+</dd>
+<p></p>
+<dt><strong><a name="item_logfilename">logFileName</a></strong><br />
+</dt>
+<dd>
+Defines the path and name of the log file that is written too.  If not defined then
+the value of appName with '.log' appended is used.  If appName is not defined in the
+constructor then BinFind is used to determine the name of the application.
+</dd>
+<p></p>
+<dt><strong><a name="item_logfilemode">logFileMode</a></strong><br />
+</dt>
+<dd>
+Used to determine if the log file is overwritten or appended too.
+Default is append.  Valid value are '&gt;' for overwrite and '&gt;&gt;' for append.
+</dd>
+<p></p>
+<dt><strong><a name="item_datetimestamp">dateTimeStamp</a></strong><br />
+</dt>
+<dd>
+If true (default is false), then each entry written to the log file using the <code>msg</code> and
+<code>exp</code> methods has the current date and time prepended to the data.
+</dd>
+<p></p>
+<dt><strong><a name="item_stderrredirect">stderrRedirect</a></strong><br />
+</dt>
+<dd>
+If true (default is true), then redirect STDERR to the log file.
+</dd>
+<p></p>
+<dt><strong><a name="item_defaultfile">defaultFile</a></strong><br />
+</dt>
+<dd>
+If true (default is false), then select the log file as the default output file.
+</dd>
+<p></p>
+<dt><strong><a name="item_logfiledatetime">logFileDateTime</a></strong><br />
+</dt>
+<dd>
+If true (default is false), then include the date and time into the name of the log file
+just before the '.log'.  The format of the date and time used is _YYYYMMDD-HHMMSS
+</dd>
+<p></p>
+<dt><strong><a name="item_appname">appName</a></strong><br />
+</dt>
+<dd>
+If logFileName is not defined then the appName is used as the basis of the log file.
+If appName is not defined then the FindBin module is use to determine the name of the
+application and is stored within the appName hash variable.
+</dd>
+<p></p>
+<dt><strong><a name="item_pidstamp">PIDstamp</a></strong><br />
+</dt>
+<dd>
+If true (default is false), then the Process ID is prepended to the data written to the log file
+by the <code>msg</code> and <code>exp</code> methods.  This is handy when there are more than one processes writting
+to the same log file.
+</dd>
+<p></p>
+<dt><strong><a name="item_storeexptext">storeExpText</a></strong><br />
+</dt>
+<dd>
+If true (default is false), then any data written with the <code>exp</code> method is also stored internally for
+later retrival with the <code>getExpText</code> method.  The stored data can also be cleared with the <code>clearExpText</code>
+method.  This can be useful if there may be multiple exceptions which you then want to report on (other
+than in the log file) as one text string.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<h2><a name="_init_&_private_methods">_init &amp; Private methods</a></h2>
+<p><em>Private</em> method to initialise the object on construction.  Called by <code>new()</code>.
+All <em>Private</em> methods start with <strong>_</strong> and should be treated as PRIVATE.  No other
+private methods are documented (since they are private).</p>
+<p>
+</p>
+<h2><a name="msg">msg</a></h2>
+<p>The <code>msg</code> method is used to log a message to the log file.  The first <strong>POSITIONAL</strong> argument
+to <code>msg</code> is the ``debug level'' at which the message should be added to the log file if the instance
+``debug value'' is greater than or equal to the ``debug level''.</p>
+<p>The second and optional subsiquent arguments are treated as text to print to the log file.</p>
+<p>eg.  $log-&gt;msg(2, ``Printed to log file if 'debug' is greater than or equal to 2 \n'');</p>
+<p><strong>Note</strong> that newline characters are <strong>not</strong> automatically appended by this method.</p>
+<p>
+</p>
+<h2><a name="exp">exp</a></h2>
+<p><code>exp</code> is used to report exceptions.  There is no ``debug level'' parameter,
+just one or more text strings which are printed to the log file.  The text printed
+has ``**'' prepended to each line (this occurs before prepended timestamp or PID values).</p>
+<p><strong>Note</strong> that newline characters are <strong>not</strong> automatically appended by this method.</p>
+<p>
+</p>
+<h2><a name="close">close</a></h2>
+<p>Closes the file handle associated with the log file.</p>
+<p>
+</p>
+<h2><a name="destroy">DESTROY</a></h2>
+<p><code>DESTROY</code> is defined and closes the file handle associated with the log file.</p>
+<p>
+</p>
+<h2><a name="pidstamp">PIDstamp</a></h2>
+<p>The <a href="#item_pidstamp"><code>PIDstamp</code></a> method can be used to set or get the value of the <em>PIDstamp</em> instance variable.
+If called without parameters, the current value of the <em>PIDstamp</em> instance variable is returned.
+If called with a parameter, the parameter is used to set the <em>PIDstamp</em> instance variable and the
+previous value is returned.</p>
+<p>Refer to the <code>new</code> method for further information.</p>
+<p>
+</p>
+<h2><a name="datetimestamp">dateTimeStamp</a></h2>
+<p>The <a href="#item_datetimestamp"><code>dateTimeStamp</code></a> method can be used to set or get the value of the <em>dateTimeStamp</em> instance variable.
+If called without parameters, the current value of the <em>dateTimeStamp</em> instance variable is returned.
+If called with a parameter, the parameter is used to set the <em>dateTimeStamp</em> instance variable and the
+previous value is returned.</p>
+<p>Refer to the <code>new</code> method for further information.</p>
+<p>
+</p>
+<h2><a name="debugvalue">debugValue</a></h2>
+<p>The <code>debugValue</code> method can be used to set or get the value of the <em>debugValue</em> instance variable.
+If called without parameters, the current value of the <em>debugValue</em> instance variable is returned.
+If called with a parameter, the parameter is used to set the <em>debugValue</em> instance variable and the
+previous value is returned.</p>
+<p>Refer to the <code>new</code> method for further information.</p>
+<p>
+</p>
+<h2><a name="exptext">expText</a></h2>
+<p>The <code>expText</code> method can be used to set or get the value of the <em>storeexptext</em> instance variable.
+If called without parameters, the current value of the <em>storeexptext</em> instance variable is returned.
+If called with a parameter, the parameter is used to set the <em>storeexptext</em> instance variable and the
+previous value is returned.</p>
+<p>Refer to the <code>new</code> method for further information.</p>
+<p>
+</p>
+<h2><a name="getexptext">getExpText</a></h2>
+<p>The <code>expText</code> method is used to retreive the stored value of the instance ``Exception Text''.</p>
+<p>
+</p>
+<h2><a name="clearexptext">clearExpText</a></h2>
+<p>The <code>clearExpText</code> method is used to clear the stored value of the instance ``Exception Text''.</p>
+<p>
+</p>
+<h2><a name="expcnt">expCnt</a></h2>
+<p>The <code>expCnt</code> method is used to retreive the number of times that the exp method has been called for this object.</p>
+<p>
+</p>
+<h2><a name="getfilename">getFileName</a></h2>
+<p>The <code>getFileName</code> method is used to retreive the actual log file name used for this object.</p>
+<p>
+</p>
+<hr />
+<h1><a name="properties">PROPERTIES</a></h1>
+<p>see the <code>new</code> method.</p>
+<p>
+</p>
+<hr />
+<h1><a name="known_issues">KNOWN ISSUES</a></h1>
+<p>none</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Greg George, IT Technology Solutions P/L, Australia
+Mobile: +61-404-892-159, Email: <a href="mailto:gng@cpan.org">gng@cpan.org</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="license">LICENSE</a></h1>
+<p>Copyright (c) 1999- Greg George. All rights reserved. This
+program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.</p>
+<p>
+</p>
+<hr />
+<h1><a name="cvs_id">CVS ID</a></h1>
+<p>$Id: Log.pl,v 1.1 2004/07/18 18:20:11 gxg6 Exp $</p>
+
+</body>
+
+</html>
