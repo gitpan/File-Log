@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 4 };
+BEGIN { plan tests => 5 };
 use File::Log;
 print 'Use it..........';
 ok(1); # If we made it this far, we're ok.
@@ -30,6 +30,18 @@ local $/;
 open F, 'test.log';
 my $str = <F>;
 ok( $str, "/$msg/" );
+close F;
+
+## Use say to write to the log
+print "Write say ......";
+$msg = "This is a test";
+$msg_result = "This is a test\n";
+$log->say(0, $msg);
+local $/;
+open F, 'test.log';
+my $str = <F>;
+ok( $str, "/$msg_result/" );
+close F;
 
 
 ## Can we write a exception to the log
@@ -40,3 +52,4 @@ local $/;
 open F, 'test.log';
 my $str = <F>;
 ok( $str, "/$msg/" );
+close F;
