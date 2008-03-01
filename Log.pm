@@ -8,7 +8,7 @@
 #------------------
 package File::Log;
 
-$VERSION = sprintf("%d.%02d", q'$Revision: 1.4 $' =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q'$Revision: 1.5 $' =~ /(\d+)\.(\d+)/);
 #------------------
 #
 
@@ -692,11 +692,15 @@ the same terms as Perl itself.
 
 =head1 CVS ID
 
-$Id: Log.pm,v 1.4 2008/02/26 08:54:31 Greg Exp $
+$Id: Log.pm,v 1.5 2008/03/01 02:56:01 Greg Exp $
 
 =head1 CHANGE HISTORY
 
  $Log: Log.pm,v $
+ Revision 1.5  2008/03/01 02:56:01  Greg
+ - Updated Makefile.PL to include prereq for Encode as I was getting cpan tester errors. NO CODE CHANGES
+
+
  Revision 1.4  2008/02/26 08:54:31  Greg
  - Updated POD
 

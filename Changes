@@ -1,5 +1,8 @@
 File::Log.pm
 
+ Revision 1.5  2008/03/01  Greg
+ - Updated Makefile.PL to enclude Encode.pm as pre req
+
  Revision 1.4  2008/02/26 08:54:31  Greg
  - Updated POD
 
